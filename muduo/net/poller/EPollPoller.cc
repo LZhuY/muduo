@@ -171,7 +171,7 @@ void EPollPoller::removeChannel(Channel* channel)
   channel->set_index(kNew);
 }
 
-void EPollPoller::update(int operation, Channel* channel)
+void EPollPoller::update(int operation, Channel* channel) ///更新channel,如向epoll中添加、删除等。
 {
   struct epoll_event event;
   bzero(&event, sizeof event);

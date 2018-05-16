@@ -53,7 +53,7 @@ void Channel::tie(const boost::shared_ptr<void>& obj)
 void Channel::update()
 {
   addedToLoop_ = true;
-  loop_->updateChannel(this);
+  loop_->updateChannel(this); ///把this channel注册到poller,fd做KEY，this 做val， poller获取活跃的channel的时候通过fd,找到channel并返回。
 }
 
 void Channel::remove()
@@ -80,7 +80,7 @@ void Channel::handleEvent(Timestamp receiveTime)
   }
 }
 
-void Channel::handleEventWithGuard(Timestamp receiveTime)
+void Channel::handleEventWithGuard(Timestamp receiveTime) ///每个channel的处理事件接口。
 {
   eventHandling_ = true;
   LOG_TRACE << reventsToString();
@@ -98,15 +98,15 @@ void Channel::handleEventWithGuard(Timestamp receiveTime)
     LOG_WARN << "fd = " << fd_ << " Channel::handle_event() POLLNVAL";
   }
 
-  if (revents_ & (POLLERR | POLLNVAL))
+  if (revents_ & (POLLERR | POLLNVAL)) ///错误CB
   {
-    if (errorCallback_) errorCallback_();
+    if (errorCallback_) errorCallback_(); 
   }
-  if (revents_ & (POLLIN | POLLPRI | POLLRDHUP))
+  if (revents_ & (POLLIN | POLLPRI | POLLRDHUP)) ///Read CB
   {
     if (readCallback_) readCallback_(receiveTime);
   }
-  if (revents_ & POLLOUT)
+  if (revents_ & POLLOUT) ///write CB
   {
     if (writeCallback_) writeCallback_();
   }

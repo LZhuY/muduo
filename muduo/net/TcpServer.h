@@ -105,16 +105,16 @@ class TcpServer : boost::noncopyable
   EventLoop* loop_;  // the acceptor loop
   const string ipPort_;
   const string name_;
-  boost::scoped_ptr<Acceptor> acceptor_; // avoid revealing Acceptor
+  boost::scoped_ptr<Acceptor> acceptor_; // avoid revealing Acceptor ///智能指针，不能复制。
   boost::shared_ptr<EventLoopThreadPool> threadPool_;
-  ConnectionCallback connectionCallback_;
+  ConnectionCallback connectionCallback_; ///全是指针，相比定义接口好像更加灵活些。
   MessageCallback messageCallback_;
   WriteCompleteCallback writeCompleteCallback_;
   ThreadInitCallback threadInitCallback_;
   AtomicInt32 started_;
   // always in loop thread
   int nextConnId_;
-  ConnectionMap connections_;
+  ConnectionMap connections_; ///连接池
 };
 
 }

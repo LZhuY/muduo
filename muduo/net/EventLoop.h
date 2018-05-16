@@ -69,7 +69,7 @@ class EventLoop : boost::noncopyable
   /// It wakes up the loop, and run the cb.
   /// If in the same loop thread, cb is run within the function.
   /// Safe to call from other threads.
-  void runInLoop(const Functor& cb);
+  void runInLoop(const Functor& cb); ///应该是丢一个回调进来，在loop线程跑。
   /// Queues callback in the loop thread.
   /// Runs after finish pooling.
   /// Safe to call from other threads.
@@ -157,7 +157,7 @@ class EventLoop : boost::noncopyable
   const pid_t threadId_;
   Timestamp pollReturnTime_;
   boost::scoped_ptr<Poller> poller_;
-  boost::scoped_ptr<TimerQueue> timerQueue_;
+  boost::scoped_ptr<TimerQueue> timerQueue_; ///时间队列。
   int wakeupFd_;
   // unlike in TimerQueue, which is an internal class,
   // we don't expose Channel to client.

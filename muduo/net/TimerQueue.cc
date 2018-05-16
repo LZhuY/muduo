@@ -100,7 +100,7 @@ TimerQueue::TimerQueue(EventLoop* loop)
   timerfdChannel_.setReadCallback(
       boost::bind(&TimerQueue::handleRead, this));
   // we are always reading the timerfd, we disarm it with timerfd_settime.
-  timerfdChannel_.enableReading();
+  timerfdChannel_.enableReading(); ///开启读事件
 }
 
 TimerQueue::~TimerQueue()
@@ -175,7 +175,7 @@ void TimerQueue::cancelInLoop(TimerId timerId)
   assert(timers_.size() == activeTimers_.size());
 }
 
-void TimerQueue::handleRead()
+void TimerQueue::handleRead() ///事件处理接口，触发定时器
 {
   loop_->assertInLoopThread();
   Timestamp now(Timestamp::now());
@@ -196,7 +196,7 @@ void TimerQueue::handleRead()
   reset(expired, now);
 }
 
-std::vector<TimerQueue::Entry> TimerQueue::getExpired(Timestamp now)
+std::vector<TimerQueue::Entry> TimerQueue::getExpired(Timestamp now) ///那到已经过期的timer，触发。
 {
   assert(timers_.size() == activeTimers_.size());
   std::vector<Entry> expired;

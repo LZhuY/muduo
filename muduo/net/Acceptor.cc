@@ -36,7 +36,7 @@ Acceptor::Acceptor(EventLoop* loop, const InetAddress& listenAddr, bool reusepor
   acceptSocket_.setReusePort(reuseport);
   acceptSocket_.bindAddress(listenAddr);
   acceptChannel_.setReadCallback(
-      boost::bind(&Acceptor::handleRead, this));
+      boost::bind(&Acceptor::handleRead, this)); ///poll会先触发channel然后再回调到这里。
 }
 
 Acceptor::~Acceptor()
@@ -51,7 +51,7 @@ void Acceptor::listen()
   loop_->assertInLoopThread();
   listenning_ = true;
   acceptSocket_.listen();
-  acceptChannel_.enableReading();
+  acceptChannel_.enableReading(); ///这里注册到poller了。
 }
 
 void Acceptor::handleRead()
@@ -66,7 +66,7 @@ void Acceptor::handleRead()
     // LOG_TRACE << "Accepts of " << hostport;
     if (newConnectionCallback_)
     {
-      newConnectionCallback_(connfd, peerAddr);
+      newConnectionCallback_(connfd, peerAddr); ///这里又回调到上一层即server层。
     }
     else
     {

@@ -111,7 +111,7 @@ void EventLoop::loop()
   while (!quit_)
   {
     activeChannels_.clear();
-    pollReturnTime_ = poller_->poll(kPollTimeMs, &activeChannels_);
+    pollReturnTime_ = poller_->poll(kPollTimeMs, &activeChannels_); ///轮询I/O事件，把活跃的push到这个activeChannels_列表中。
     ++iteration_;
     if (Logger::logLevel() <= Logger::TRACE)
     {
@@ -119,7 +119,7 @@ void EventLoop::loop()
     }
     // TODO sort channel by priority
     eventHandling_ = true;
-    for (ChannelList::iterator it = activeChannels_.begin();
+    for (ChannelList::iterator it = activeChannels_.begin(); ///遍历activeChannels_,调对应的handleEvent接口处理信息。
         it != activeChannels_.end(); ++it)
     {
       currentActiveChannel_ = *it;
@@ -127,7 +127,7 @@ void EventLoop::loop()
     }
     currentActiveChannel_ = NULL;
     eventHandling_ = false;
-    doPendingFunctors();
+    doPendingFunctors(); ///处理需要马上触发的CB，由runInLoop接口丢进来的CB
   }
 
   LOG_TRACE << "EventLoop " << this << " stop looping";
@@ -177,7 +177,7 @@ size_t EventLoop::queueSize() const
   return pendingFunctors_.size();
 }
 
-TimerId EventLoop::runAt(const Timestamp& time, const TimerCallback& cb)
+TimerId EventLoop::runAt(const Timestamp& time, const TimerCallback& cb) ///添加到时间队列中，时间队列也有自己的loop就是this
 {
   return timerQueue_->addTimer(cb, time, 0.0);
 }
@@ -196,7 +196,7 @@ TimerId EventLoop::runEvery(double interval, const TimerCallback& cb)
 
 #ifdef __GXX_EXPERIMENTAL_CXX0X__
 // FIXME: remove duplication
-void EventLoop::runInLoop(Functor&& cb)
+void EventLoop::runInLoop(Functor&& cb) ///向队列中添加CB
 {
   if (isInLoopThread())
   {
@@ -208,7 +208,7 @@ void EventLoop::runInLoop(Functor&& cb)
   }
 }
 
-void EventLoop::queueInLoop(Functor&& cb)
+void EventLoop::queueInLoop(Functor&& cb) ///删除队列中的CB
 {
   {
   MutexLockGuard lock(mutex_);
@@ -277,7 +277,7 @@ void EventLoop::abortNotInLoopThread()
             << ", current thread id = " <<  CurrentThread::tid();
 }
 
-void EventLoop::wakeup()
+void EventLoop::wakeup() ///随便写点东西去触发事件
 {
   uint64_t one = 1;
   ssize_t n = sockets::write(wakeupFd_, &one, sizeof one);
@@ -297,7 +297,7 @@ void EventLoop::handleRead()
   }
 }
 
-void EventLoop::doPendingFunctors()
+void EventLoop::doPendingFunctors() ///处理runInLoop接口丢进来的CB
 {
   std::vector<Functor> functors;
   callingPendingFunctors_ = true;
