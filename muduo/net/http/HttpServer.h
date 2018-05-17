@@ -69,3 +69,12 @@ class HttpServer : boost::noncopyable
 }
 
 #endif  // MUDUO_NET_HTTP_HTTPSERVER_H
+
+
+/*
+非常简洁设计很好的一个HTTPServer设计与实现。首先模块区分很明确，模块之间的解耦做的很好。
+HTTPserver组合所有组件。HTTPContext提供了解析字符流的接口，解析完完整的HTTPrequest请求，
+后丢给HTTPserver设置的信息回调函数处理，处理完的结果封装成HTTPresponse，然后写会调用者。
+这里拿到Httprespnse后很容易改成异步的写好，把HTTPresponse存到一个列表中，只要通过HTTPresponse
+能拿到对应的connect就行。
+*/

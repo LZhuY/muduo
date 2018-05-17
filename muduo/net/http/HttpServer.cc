@@ -65,7 +65,7 @@ void HttpServer::onConnection(const TcpConnectionPtr& conn)
 {
   if (conn->connected())
   {
-    conn->setContext(HttpContext());
+    conn->setContext(HttpContext()); //这个很厉害了，设置一个content进去，这个content可以有不同的解析接口,算是一个策略设计模式？？
   }
 }
 
@@ -75,7 +75,7 @@ void HttpServer::onMessage(const TcpConnectionPtr& conn,
 {
   HttpContext* context = boost::any_cast<HttpContext>(conn->getMutableContext());
 
-  if (!context->parseRequest(buf, receiveTime))
+  if (!context->parseRequest(buf, receiveTime)) //content解析收到的数据，打包好数据后交给处理信息接口。
   {
     conn->send("HTTP/1.1 400 Bad Request\r\n\r\n");
     conn->shutdown();

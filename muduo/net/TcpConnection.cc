@@ -365,7 +365,7 @@ void TcpConnection::handleRead(Timestamp receiveTime)
   }
 }
 
-void TcpConnection::handleWrite()
+void TcpConnection::handleWrite() ///也是从channel那边回调过来
 {
   loop_->assertInLoopThread();
   if (channel_->isWriting())
