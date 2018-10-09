@@ -81,7 +81,7 @@ void Hiredis::setChannel()
   LOG_DEBUG << this;
   assert(!channel_);
   channel_.reset(new Channel(loop_, fd()));
-  channel_->setReadCallback(boost::bind(&Hiredis::handleRead, this, _1));
+  channel_->setReadCallback(boost::bind(&Hiredis::handleRead, this, _1)); //std::bind给接口绑定参数，_1 占位符
   channel_->setWriteCallback(boost::bind(&Hiredis::handleWrite, this));
 }
 
